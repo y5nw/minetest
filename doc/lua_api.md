@@ -6699,6 +6699,16 @@ This allows you easy interoperability for delegating work to jobs.
     * When `func` returns the callback is called (in the normal environment)
       with all of the return values as arguments.
     * Optional: Variable number of arguments that are passed to `func`
+    * Returns the ID of the async job.
+* `minetest.replace_async(id, func, callback, ...)`:
+    * Try to replace the job with the given ID. The new job is otherwise queued
+      as if by `minetest.handle_async`.
+    * Note that the `func`, `callback` and variable arguments are all replaced.
+    * Returns the ID of the new async job. This is the same as the previous id
+      if the previous job was canceled.
+* `minetest.cancel_async(id)`:
+    * Try to cancel the job with the given ID.
+    * Returns whether the job was canceled.
 * `minetest.register_async_dofile(path)`:
     * Register a path to a Lua file to be imported when an async environment
       is initialized. You can use this to preload code which you can then call
