@@ -221,8 +221,33 @@ local function test_async_job_replacement(cb)
 		if ret ~= -2 then
 			return cb("Wrong async value passed")
 		end
-		cb()
 	end, 2)
 	assert(id == new_id, "core.replace_async sanity check failed")
+
+	id = core.handle_async(function(x)
+		return x
+	end, function()
+		return cb("Canceled async job run")
+	end)
+	assert(core.cancel_async(id), "core.cancel_async sanity check failed")
+
+	-- Try to replace a job that is already run. Do this by delaying the main thread by some time.
+	-- Canceling the job does not need to be tested again since it is a thing wrapper that is already tested earlier.
+	id = core.handle_async(function(x)
+		return x
+	end, function(ret)
+		if ret ~= 1 then
+			return cb("Wrong async value passed to old handler")
+		end
+
+		core.replace_async(id, function(x)
+			return -x
+		end, function(new_ret)
+			if new_ret ~= -2 then
+				return cb("wrong async value passed to new handler")
+			end
+			cb()
+		end, 2)
+	end, 1)
 end
 unittests.register("test_async_job_replacement", test_async_job_replacement, {async=true})
