@@ -8,15 +8,31 @@ function core.async_event_handler(jobid, retval)
 	core.async_jobs[jobid] = nil
 end
 
-function core.handle_async(func, callback, ...)
+local function prepare_async_args(func, callback, ...)
 	assert(type(func) == "function" and type(callback) == "function",
-		"Invalid minetest.handle_async invocation")
+		"Invalid invocation of minetest.handle_async or minetest.replace_async")
 	local args = {n = select("#", ...), ...}
 	local mod_origin = core.get_last_run_mod()
 
-	local jobid = core.do_async_callback(func, args, mod_origin)
-	core.async_jobs[jobid] = callback
-
-	return true
+	return func, args, mod_origin
 end
 
+function core.handle_async(func, callback, ...)
+	local jobid = core.do_async_callback(prepare_async_args(func, callback, ...))
+	core.async_jobs[jobid] = callback
+
+	return jobid
+end
+
+function core.replace_async(jobid, func, callback, ...)
+	assert(type(jobid) == "number",
+		"Invalid jobid for minetest.replace_async")
+
+	local newid = core.replace_async_callback(jobid, prepare_async_args(func, callback, ...))
+	return newid
+end
+
+local dummy = function() end
+function core.cancel_asyunc(jobid)
+	core.replace_async(jobid, dummy, dummy)
+end

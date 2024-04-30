@@ -41,6 +41,8 @@ class AsyncEngine;
 struct LuaJobInfo
 {
 	LuaJobInfo() = default;
+	LuaJobInfo(std::string &&func, std::string &&params, const std::string &mod_origin = "");
+	LuaJobInfo(std::string &&func, PackedValue *params, const std::string &mod_origin = "");
 
 	// Function to be called in async environment (from string.dump)
 	std::string function;
@@ -115,6 +117,26 @@ public:
 			const std::string &mod_origin = "");
 
 	/**
+	 * Replace an async job if possible or queue the job otherwise
+	 * @param oldId The ID of the job to replace
+	 * @param func Serialized lua function
+	 * @param params Serialized parameters
+	 * @return jobid The job is replaced or queued
+	 */
+	u32 replaceAsyncJob(const u32 &oldId, std::string &&func, std::string &&params,
+			const std::string &mod_origin = "");
+
+	/**
+	 * Replace an async job if possible or queue the job otherwise
+	 * @param oldId The ID of the job to replace
+	 * @param func Serialized lua function
+	 * @param params Serialized parameters (takes ownership!)
+	 * @return ID of queued job
+	 */
+	u32 replaceAsyncJob(const u32 &oldId, std::string &&func, PackedValue *params,
+			const std::string &mod_origin = "");
+
+	/**
 	 * Engine step to process finished jobs
 	 * @param L The Lua stack
 	 */
@@ -128,6 +150,21 @@ protected:
 	 * @return whether a job was available
 	 */
 	bool getJob(LuaJobInfo *job);
+
+	/**
+	 * Queue an async job
+	 * @param job The job to queue (takes ownership!)
+	 * @return Id of the queued job
+	 */
+	u32 queueAsyncJob(LuaJobInfo &&job);
+
+	/**
+	 * Replace an async job if possible or queue the job otherwise
+	 * @param jobId The Id of the job to replace
+	 * @param job The new job to use in-place (takes ownership!)
+	 * @return Id of the new job
+	 */
+	u32 replaceAsyncJob(const u32 &jobId, LuaJobInfo &&job);
 
 	/**
 	 * Put a Job result back to result queue

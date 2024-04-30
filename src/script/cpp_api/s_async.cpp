@@ -35,6 +35,16 @@ extern "C" {
 #include "common/c_packer.h"
 #include "lua_api/l_base.h"
 
+LuaJobInfo::LuaJobInfo(std::string &&func, std::string &&params, const std::string &mod_origin):
+	function(func), params(params), mod_origin(mod_origin)
+{}
+
+LuaJobInfo::LuaJobInfo(std::string &&func, PackedValue *params, const std::string &mod_origin):
+	function(func), mod_origin(mod_origin)
+{
+	params_ext.reset(params);
+}
+
 /******************************************************************************/
 AsyncEngine::~AsyncEngine()
 {
@@ -101,38 +111,62 @@ void AsyncEngine::addWorkerThread()
 }
 
 /******************************************************************************/
-u32 AsyncEngine::queueAsyncJob(std::string &&func, std::string &&params,
-		const std::string &mod_origin)
+
+u32 AsyncEngine::queueAsyncJob(LuaJobInfo &&job)
 {
 	MutexAutoLock autolock(jobQueueMutex);
 	u32 jobId = jobIdCounter++;
 
-	jobQueue.emplace_back();
-	auto &to_add = jobQueue.back();
-	to_add.id = jobId;
-	to_add.function = std::move(func);
-	to_add.params = std::move(params);
-	to_add.mod_origin = mod_origin;
+	job.id = jobId;
+	jobQueue.push_back(std::move(job));
 
 	jobQueueCounter.post();
 	return jobId;
 }
 
+u32 AsyncEngine::queueAsyncJob(std::string &&func, std::string &&params,
+		const std::string &mod_origin)
+{
+	LuaJobInfo to_add(std::move(func), std::move(params), mod_origin);
+	return queueAsyncJob(std::move(to_add));
+}
+
 u32 AsyncEngine::queueAsyncJob(std::string &&func, PackedValue *params,
 		const std::string &mod_origin)
 {
-	MutexAutoLock autolock(jobQueueMutex);
-	u32 jobId = jobIdCounter++;
+	LuaJobInfo to_add(std::move(func), params, mod_origin);
+	return queueAsyncJob(std::move(to_add));
+}
 
-	jobQueue.emplace_back();
-	auto &to_add = jobQueue.back();
-	to_add.id = jobId;
-	to_add.function = std::move(func);
-	to_add.params_ext.reset(params);
-	to_add.mod_origin = mod_origin;
+u32 AsyncEngine::replaceAsyncJob(const u32 &oldId, LuaJobInfo &&job)
+{
+	MutexAutoLock autolock(jobQueueMutex);
+	int pos = oldId - (jobIdCounter - jobQueue.size());
+	u32 jobId = oldId;
+	if (pos < 0 || pos >= jobQueue.size()) {
+		job.id = jobId = jobIdCounter++;
+		jobQueue.push_back(std::move(job));
+	} else {
+		job.id = jobId;
+		jobQueue[pos] = std::move(job);
+	}
 
 	jobQueueCounter.post();
 	return jobId;
+}
+
+u32 AsyncEngine::replaceAsyncJob(const u32 &oldId, std::string &&func, std::string &&params,
+		const std::string &mod_origin)
+{
+	LuaJobInfo to_add(std::move(func), std::move(params), mod_origin);
+	return replaceAsyncJob(oldId, std::move(to_add));
+}
+
+u32 AsyncEngine::replaceAsyncJob(const u32 &oldId, std::string &&func, PackedValue *params,
+		const std::string &mod_origin)
+{
+	LuaJobInfo to_add(std::move(func), params, mod_origin);
+	return replaceAsyncJob(oldId, std::move(to_add));
 }
 
 /******************************************************************************/
