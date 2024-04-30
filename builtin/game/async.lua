@@ -34,6 +34,6 @@ function core.replace_async(jobid, func, callback, ...)
 end
 
 local dummy = function() end
-function core.cancel_asyunc(jobid)
+function core.cancel_async(jobid)
 	core.replace_async(jobid, dummy, dummy)
 end
