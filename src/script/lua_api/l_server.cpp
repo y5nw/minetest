@@ -648,26 +648,54 @@ int ModApiServer::l_notify_authentication_modified(lua_State *L)
 	return 0;
 }
 
+static std::string get_serialized_function(lua_State *L, int index)
+{
+	luaL_checktype(L, index, LUA_TFUNCTION);
+	call_string_dump(L, index);
+	size_t func_length;
+	const char *serialized_func_raw = lua_tolstring(L, -1, &func_length);
+	return std::string(serialized_func_raw, func_length);
+}
+
 // do_async_callback(func, params, mod_origin)
 int ModApiServer::l_do_async_callback(lua_State *L)
 {
 	NO_MAP_LOCK_REQUIRED;
 	ServerScripting *script = getScriptApi<ServerScripting>(L);
 
-	luaL_checktype(L, 1, LUA_TFUNCTION);
 	luaL_checktype(L, 2, LUA_TTABLE);
 	luaL_checktype(L, 3, LUA_TSTRING);
 
-	call_string_dump(L, 1);
-	size_t func_length;
-	const char *serialized_func_raw = lua_tolstring(L, -1, &func_length);
-
+	auto serialized_func = get_serialized_function(L, 1);
 	PackedValue *param = script_pack(L, 2);
-
 	std::string mod_origin = readParam<std::string>(L, 3);
 
 	u32 jobId = script->queueAsync(
-		std::string(serialized_func_raw, func_length),
+		std::move(serialized_func),
+		param, mod_origin);
+
+	lua_settop(L, 0);
+	lua_pushinteger(L, jobId);
+	return 1;
+}
+
+// replace_async_callback(id, func, params, mod_origin)
+int ModApiServer::l_replace_async_callback(lua_State *L)
+{
+	NO_MAP_LOCK_REQUIRED;
+	ServerScripting *script = getScriptApi<ServerScripting>(L);
+
+	luaL_checktype(L, 1, LUA_TNUMBER);
+	luaL_checktype(L, 3, LUA_TTABLE);
+	luaL_checktype(L, 4, LUA_TSTRING);
+
+	u32 id = lua_tointeger(L, 1);
+	auto serialized_func = get_serialized_function(L, 2);
+	PackedValue *param = script_pack(L, 3);
+	std::string mod_origin = readParam<std::string>(L, 4);
+
+	u32 jobId = script->replaceAsync(id,
+		std::move(serialized_func),
 		param, mod_origin);
 
 	lua_settop(L, 0);
@@ -771,6 +799,7 @@ void ModApiServer::Initialize(lua_State *L, int top)
 	API_FCT(notify_authentication_modified);
 
 	API_FCT(do_async_callback);
+	API_FCT(replace_async_callback);
 	API_FCT(register_async_dofile);
 	API_FCT(serialize_roundtrip);
 

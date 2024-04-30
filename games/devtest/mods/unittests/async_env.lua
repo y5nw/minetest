@@ -207,3 +207,22 @@ local function test_vector_preserve(cb)
 	end, {vec})
 end
 unittests.register("test_async_vector", test_vector_preserve, {async=true})
+
+local function test_async_job_replacement(cb)
+	local id = core.handle_async(function(x)
+		return x
+	end, function(ret)
+		print(ret)
+		cb("Replaced async callback still run")
+	end, 1)
+	local new_id = core.replace_async(id, function(x)
+		return -x
+	end, function(ret)
+		if ret ~= -2 then
+			return cb("Wrong async value passed")
+		end
+		cb()
+	end, 2)
+	assert(id == new_id, "core.replace_async sanity check failed")
+end
+unittests.register("test_async_job_replacement", test_async_job_replacement, {async=true})

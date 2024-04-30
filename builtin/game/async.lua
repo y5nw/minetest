@@ -29,6 +29,7 @@ function core.replace_async(jobid, func, callback, ...)
 		"Invalid jobid for minetest.replace_async")
 
 	local newid = core.replace_async_callback(jobid, prepare_async_args(func, callback, ...))
+	core.async_jobs[jobid] = callback
 	return newid
 end
 

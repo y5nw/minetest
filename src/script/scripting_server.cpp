@@ -140,6 +140,13 @@ u32 ServerScripting::queueAsync(std::string &&serialized_func,
 			param, mod_origin);
 }
 
+u32 ServerScripting::replaceAsync(const u32 &id, std::string &&serialized_func,
+	PackedValue *param, const std::string &mod_origin)
+{
+	return asyncEngine.replaceAsyncJob(id, std::move(serialized_func),
+			param, mod_origin);
+}
+
 void ServerScripting::InitializeModApi(lua_State *L, int top)
 {
 	// Register reference classes (userdata)
