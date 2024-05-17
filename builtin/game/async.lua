@@ -10,7 +10,7 @@ end
 
 local function prepare_async_args(func, callback, ...)
 	assert(type(func) == "function" and type(callback) == "function",
-		"Invalid invocation of minetest.handle_async or minetest.replace_async")
+		"Invalid invocation of minetest.handle_async or AsyncJob:replace")
 	local args = {n = select("#", ...), ...}
 	local mod_origin = core.get_last_run_mod()
 
@@ -18,22 +18,24 @@ local function prepare_async_args(func, callback, ...)
 end
 
 function core.handle_async(func, callback, ...)
-	local jobid = core.do_async_callback(prepare_async_args(func, callback, ...))
-	core.async_jobs[jobid] = callback
+	local job = core.do_async_callback(prepare_async_args(func, callback, ...))
+	core.async_jobs[job:get_id()] = callback
 
-	return jobid
+	return job
 end
 
-function core.replace_async(jobid, func, callback, ...)
-	assert(type(jobid) == "number",
-		"Invalid jobid for minetest.replace_async")
+if core.async_job_methods then
+	local replace_job = core.async_job_methods.replace
+	function core.async_job_methods:replace(func, callback, ...)
+		local newjob = replace_job(self, prepare_async_args(func, callback, ...))
+		core.async_jobs[newjob:get_id()] = callback
+		return newjob
+	end
 
-	local newid = core.replace_async_callback(jobid, prepare_async_args(func, callback, ...))
-	core.async_jobs[newid] = callback
-	return newid
-end
+	local dummy = function() end
+	function core.async_job_methods:cancel()
+		return self:get_id() == self:replace(dummy, dummy)
+	end
 
-local dummy = function() end
-function core.cancel_async(jobid)
-	return jobid == core.replace_async(jobid, dummy, dummy)
+	core.async_job_methods = nil
 end

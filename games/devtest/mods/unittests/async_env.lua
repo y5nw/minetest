@@ -209,41 +209,41 @@ end
 unittests.register("test_async_vector", test_vector_preserve, {async=true})
 
 local function test_async_job_replacement(cb)
-	local id = core.handle_async(function(x)
+	local job = core.handle_async(function(x)
 		return x
 	end, function(ret)
 		print(ret)
 		cb("Replaced async callback still run")
 	end, 1)
-	local new_id = core.replace_async(id, function(x)
+	local newjob = job:replace(function(x)
 		return -x
 	end, function(ret)
 		if ret ~= -2 then
 			return cb("Wrong async value passed")
 		end
 	end, 2)
-	if id ~= new_id then
+	if job:get_id() ~= newjob:get_id() then
 		cb("core.replace_async sanity check failed")
 	end
 
-	id = core.handle_async(function(x)
+	job = core.handle_async(function(x)
 		return x
 	end, function()
 		return cb("Canceled async job run")
 	end)
-	if not core.cancel_async(id) then
+	if not job:cancel() then
 		cb("core.cancel_async sanity check failed")
 	end
 
 	-- Try to replace a job that is already run. Do this by delaying the main thread by some time.
-	id = core.handle_async(function(x)
+	job = core.handle_async(function(x)
 		return x
 	end, function(ret)
 		if ret ~= 1 then
 			return cb("Wrong async value passed to old handler")
 		end
 
-		new_id = core.replace_async(id, function(x)
+		newjob = job:replace(id, function(x)
 			return -x
 		end, function(new_ret)
 			if new_ret ~= -2 then
@@ -251,10 +251,10 @@ local function test_async_job_replacement(cb)
 			end
 			cb()
 		end, 2)
-		if id == new_id then
+		if job:get_id() == newjob:get_id() then
 			cb("core.replace_async replaced a completed job")
 		end
-		if core.cancel_async(id) then
+		if id:cancel() then
 			cb("core.relpace_async canceled a completed job")
 		end
 	end, 1)
