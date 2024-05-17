@@ -77,7 +77,7 @@ void LuaAsyncJob::Register(lua_State *L)
 	lua_getglobal(L, "core");
 	luaL_getmetatable(L, className);
 	lua_getfield(L, -1, "__index");
-	lua_setfield(L, -2, "async_job_methods");
+	lua_setfield(L, -3, "async_job_methods");
 }
 
 const char LuaAsyncJob::className[] = "AsyncJob";

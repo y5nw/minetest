@@ -34,7 +34,7 @@ if core.async_job_methods then
 
 	local dummy = function() end
 	function core.async_job_methods:cancel()
-		return self:get_id() == self:replace(dummy, dummy)
+		return self:get_id() == self:replace(dummy, dummy):get_id()
 	end
 
 	core.async_job_methods = nil
