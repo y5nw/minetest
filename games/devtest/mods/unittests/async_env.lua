@@ -212,7 +212,7 @@ local function test_async_job_replacement(cb)
 	local job = core.handle_async(function(x)
 		return x
 	end, function(ret)
-		cb("Replaced async callback still run")
+		return cb("Replaced async callback still run")
 	end, 1)
 	local newjob = job:replace(function(x)
 		return -x
@@ -222,7 +222,7 @@ local function test_async_job_replacement(cb)
 		end
 	end, 2)
 	if job:get_id() ~= newjob:get_id() then
-		cb("AsyncJob:replace sanity check failed")
+		return cb("AsyncJob:replace sanity check failed")
 	end
 
 	job = core.handle_async(function(x)
@@ -231,7 +231,7 @@ local function test_async_job_replacement(cb)
 		return cb("Canceled async job run")
 	end)
 	if not job:cancel() then
-		cb("core.cancel_async sanity check failed")
+		return cb("core.cancel_async sanity check failed")
 	end
 
 	-- Try to replace a job that is already run. Do this by delaying the main thread by some time.
@@ -251,10 +251,10 @@ local function test_async_job_replacement(cb)
 			cb()
 		end, 2)
 		if job:get_id() == newjob:get_id() then
-			cb("AsyncJob:replace replaced a completed job")
+			return cb("AsyncJob:replace replaced a completed job")
 		end
 		if job:cancel() then
-			cb("AsyncJob:replace canceled a completed job")
+			return cb("AsyncJob:replace canceled a completed job")
 		end
 	end, 1)
 end
