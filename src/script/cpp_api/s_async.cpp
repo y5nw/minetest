@@ -423,3 +423,21 @@ void* AsyncWorkerThread::run()
 	return 0;
 }
 
+u32 ScriptApiAsync::queueAsync(std::string &&serialized_func,
+		PackedValue *param, const std::string &mod_origin)
+{
+	return asyncEngine.queueAsyncJob(std::move(serialized_func),
+			param, mod_origin);
+}
+
+u32 ScriptApiAsync::replaceAsync(const u32 &id, std::string &&serialized_func,
+		PackedValue *param, const std::string &mod_origin)
+{
+	return asyncEngine.replaceAsyncJob(id, std::move(serialized_func),
+			param, mod_origin);
+}
+
+void ScriptApiAsync::stepAsync()
+{
+	asyncEngine.step(getStack());
+}

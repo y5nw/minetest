@@ -232,3 +232,21 @@ private:
 	// Counter semaphore for job dispatching
 	Semaphore jobQueueCounter;
 };
+
+class ScriptApiAsync:
+	virtual public ScriptApiBase
+{
+public:
+	ScriptApiAsync(Server *server): asyncEngine(server) {}
+
+	virtual void initAsync() = 0;
+	void stepAsync();
+
+	u32 queueAsync(std::string &&serialized_func,
+			PackedValue *param, const std::string &mod_origin);
+	u32 replaceAsync(const u32 &id, std::string &&serialized_func,
+			PackedValue *param, const std::string &mod_origin);
+
+protected:
+	AsyncEngine asyncEngine;
+};

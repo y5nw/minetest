@@ -37,6 +37,7 @@ struct PackedValue;
 
 class ServerScripting:
 		virtual public ScriptApiBase,
+		public ScriptApiAsync,
 		public ScriptApiDetached,
 		public ScriptApiEntity,
 		public ScriptApiEnv,
@@ -58,20 +59,8 @@ public:
 	// Initialize async engine, call this AFTER loading all mods
 	void initAsync();
 
-	// Global step handler to collect async results
-	void stepAsync();
-
-	// Pass job to async threads
-	u32 queueAsync(std::string &&serialized_func,
-		PackedValue *param, const std::string &mod_origin);
-
-	u32 replaceAsync(const u32 &id, std::string &&serialized_func,
-		PackedValue *param, const std::string &mod_origin);
-
 private:
 	void InitializeModApi(lua_State *L, int top);
 
 	static void InitializeAsync(lua_State *L, int top);
-
-	AsyncEngine asyncEngine;
 };
