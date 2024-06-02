@@ -231,7 +231,7 @@ local function test_async_job_replacement(cb)
 		return cb("Canceled async job run")
 	end)
 	if not job:cancel() then
-		return cb("core.cancel_async sanity check failed")
+		return cb("AsyncJob:cancel sanity check failed")
 	end
 
 	-- Try to replace a job that is already run. Do this by delaying the main thread by some time.
