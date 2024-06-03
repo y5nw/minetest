@@ -41,4 +41,6 @@ public:
 private:
 	// do_async_callback(func, params, mod_origin)
 	static int l_do_async_callback(lua_State *L);
+	// get_async_threading_capacity()
+	static int l_get_async_threading_capacity(lua_State *L);
 };

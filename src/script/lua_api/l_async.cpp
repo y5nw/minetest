@@ -110,7 +110,18 @@ int ModApiAsync::l_do_async_callback(lua_State *L)
 	return 1;
 }
 
+// get_async_capacity()
+int ModApiAsync::l_get_async_threading_capacity(lua_State *L)
+{
+	NO_MAP_LOCK_REQUIRED;
+	ScriptApiAsync *script = getScriptApi<ScriptApiAsync>(L);
+	lua_settop(L, 0);
+	lua_pushinteger(L, script->getThreadingCapacity());
+	return 1;
+}
+
 void ModApiAsync::Initialize(lua_State *L, int top)
 {
 	API_FCT(do_async_callback);
+	API_FCT(get_async_threading_capacity);
 }

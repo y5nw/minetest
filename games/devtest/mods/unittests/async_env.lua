@@ -208,7 +208,19 @@ local function test_vector_preserve(cb)
 end
 unittests.register("test_async_vector", test_vector_preserve, {async=true})
 
+local function fill_async()
+	local capacity = core.get_async_threading_capacity()
+	for _ = 1, capacity do
+		core.handle_async(function()
+			local t = os.clock()
+			while os.clock() < t + 0.1 do
+			end
+		end, function() end)
+	end
+end
+
 local function test_async_job_replacement(cb)
+	fill_async()
 	local job = core.handle_async(function(x)
 		return x
 	end, function(ret)

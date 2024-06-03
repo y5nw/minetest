@@ -142,6 +142,13 @@ public:
 	 */
 	void step(lua_State *L);
 
+	/**
+	 * Get the maximum number of threads that can be used by the async environment
+	 */
+	unsigned int getThreadingCapacity() const {
+		return autoscaleMaxWorkers;
+	}
+
 protected:
 	/**
 	 * Get a Job from queue to be processed
@@ -246,6 +253,9 @@ public:
 			PackedValue *param, const std::string &mod_origin);
 	u32 replaceAsync(const u32 &id, std::string &&serialized_func,
 			PackedValue *param, const std::string &mod_origin);
+	unsigned int getThreadingCapacity() const {
+		return asyncEngine.getThreadingCapacity();
+	}
 
 protected:
 	AsyncEngine asyncEngine;
