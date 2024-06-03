@@ -226,13 +226,16 @@ local function test_async_job_replacement(cb)
 	end, function(ret)
 		return cb("Replaced async callback still run")
 	end, 1)
-	local newjob = job:replace(function(x)
+	local cancelled, newjob = job:replace(function(x)
 		return -x
 	end, function(ret)
 		if ret ~= -2 then
 			return cb("Wrong async value passed")
 		end
 	end, 2)
+	if not cancelled then
+		return cb("AsyncJob:replace sanity check failed")
+	end
 
 	job = core.handle_async(function(x)
 		return x
@@ -251,7 +254,7 @@ local function test_async_job_replacement(cb)
 			return cb("Wrong async value passed to old handler")
 		end
 
-		newjob = job:replace(function(x)
+		cancelled, newjob = job:replace(function(x)
 			return -x
 		end, function(new_ret)
 			if new_ret ~= -2 then
@@ -259,7 +262,7 @@ local function test_async_job_replacement(cb)
 			end
 			cb()
 		end, 2)
-		if job:get_id() == newjob:get_id() then
+		if cancelled then
 			return cb("AsyncJob:replace replaced a completed job")
 		end
 		if job:cancel() then

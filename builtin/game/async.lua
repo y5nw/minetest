@@ -26,8 +26,8 @@ end
 
 if core.async_job_methods then
 	function core.async_job_methods:replace(func, callback, ...)
-		self:cancel()
-		return core.handle_async(func, callback, ...)
+		local cancelled = self:cancel()
+		return cancelled, core.handle_async(func, callback, ...)
 	end
 
 	function core.async_job_methods:cancel()

@@ -7471,12 +7471,13 @@ An `AsyncJob` is a reference to a job to be run in an async environment.
 ### Methods
 * `get_id()`: get the numeric ID of the job.
 * `replace(func, callback, ...)`:
-    * Try to replace the job or (if not possible) queue a new job.
-    * Note that the `func`, `callback` and variable arguments are all replaced.
-    * Returns the `AsyncJob` reference to the new async job. This is the same
-      as `self` if the previous job was replaced.
+    * Try to cancel the job, and queue a new job regardless of whether the
+      previous job was cancelled.
+    * Returns
+        * Whether the previous job was cancelled and
+        * The `AsyncJob` reference to the new job.
 * `cancel()`: try to cancel the job
-    * Returns whether the job was canceled.
+    * Returns whether the job was cancelled.
 
 `InvRef`
 --------
