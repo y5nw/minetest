@@ -6715,8 +6715,6 @@ This allows you easy interoperability for delegating work to jobs.
       same name.
     * You must register the metatable in both the main environment
       and the async environment for this mechanism to work.
-* `minetest.get_async_threading_capacity()`: Gets the maximum number of
-  threads that can be used by the async environment.
 
 ### List of APIs available in an async environment
 
