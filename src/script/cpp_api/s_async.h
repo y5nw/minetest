@@ -58,6 +58,8 @@ struct LuaJobInfo
 	std::string mod_origin;
 	// JobID used to identify a job and match it to callback
 	u32 id;
+	// Whether to skip this job
+	bool skip = false;
 };
 
 // Asynchronous working environment
@@ -117,24 +119,11 @@ public:
 			const std::string &mod_origin = "");
 
 	/**
-	 * Replace an async job if possible or queue the job otherwise
-	 * @param oldId The ID of the job to replace
-	 * @param func Serialized lua function
-	 * @param params Serialized parameters
-	 * @return jobid The job is replaced or queued
+	 * Try to cancel an async job
+	 * @param id The ID of the job
+	 * @return Whether the job was cancelled
 	 */
-	u32 replaceAsyncJob(const u32 &oldId, std::string &&func, std::string &&params,
-			const std::string &mod_origin = "");
-
-	/**
-	 * Replace an async job if possible or queue the job otherwise
-	 * @param oldId The ID of the job to replace
-	 * @param func Serialized lua function
-	 * @param params Serialized parameters (takes ownership!)
-	 * @return ID of queued job
-	 */
-	u32 replaceAsyncJob(const u32 &oldId, std::string &&func, PackedValue *params,
-			const std::string &mod_origin = "");
+	bool cancelAsyncJob(const u32 &id);
 
 	/**
 	 * Engine step to process finished jobs
@@ -164,14 +153,6 @@ protected:
 	 * @return Id of the queued job
 	 */
 	u32 queueAsyncJob(LuaJobInfo &&job);
-
-	/**
-	 * Replace an async job if possible or queue the job otherwise
-	 * @param jobId The Id of the job to replace
-	 * @param job The new job to use in-place (takes ownership!)
-	 * @return Id of the new job
-	 */
-	u32 replaceAsyncJob(const u32 &jobId, LuaJobInfo &&job);
 
 	/**
 	 * Put a Job result back to result queue
@@ -251,8 +232,7 @@ public:
 
 	u32 queueAsync(std::string &&serialized_func,
 			PackedValue *param, const std::string &mod_origin);
-	u32 replaceAsync(const u32 &id, std::string &&serialized_func,
-			PackedValue *param, const std::string &mod_origin);
+	bool cancelAsync(const u32 &id);
 	unsigned int getThreadingCapacity() const {
 		return asyncEngine.getThreadingCapacity();
 	}

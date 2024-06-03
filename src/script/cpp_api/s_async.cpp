@@ -138,35 +138,14 @@ u32 AsyncEngine::queueAsyncJob(std::string &&func, PackedValue *params,
 	return queueAsyncJob(std::move(to_add));
 }
 
-u32 AsyncEngine::replaceAsyncJob(const u32 &oldId, LuaJobInfo &&job)
+bool AsyncEngine::cancelAsyncJob(const u32 &id)
 {
 	MutexAutoLock autolock(jobQueueMutex);
-	int pos = oldId - (jobIdCounter - jobQueue.size());
-	u32 jobId = oldId;
-	if (pos < 0 || pos >= jobQueue.size()) {
-		job.id = jobId = jobIdCounter++;
-		jobQueue.push_back(std::move(job));
-	} else {
-		job.id = jobId;
-		jobQueue[pos] = std::move(job);
-	}
-
-	jobQueueCounter.post();
-	return jobId;
-}
-
-u32 AsyncEngine::replaceAsyncJob(const u32 &oldId, std::string &&func, std::string &&params,
-		const std::string &mod_origin)
-{
-	LuaJobInfo to_add(std::move(func), std::move(params), mod_origin);
-	return replaceAsyncJob(oldId, std::move(to_add));
-}
-
-u32 AsyncEngine::replaceAsyncJob(const u32 &oldId, std::string &&func, PackedValue *params,
-		const std::string &mod_origin)
-{
-	LuaJobInfo to_add(std::move(func), params, mod_origin);
-	return replaceAsyncJob(oldId, std::move(to_add));
+	int pos = id - (jobIdCounter - jobQueue.size());
+	if (pos < 0 || pos >= jobQueue.size())
+		return false;
+	jobQueue[pos].skip = true;
+	return true;
 }
 
 /******************************************************************************/
@@ -180,7 +159,7 @@ bool AsyncEngine::getJob(LuaJobInfo *job)
 	if (!jobQueue.empty()) {
 		*job = std::move(jobQueue.front());
 		jobQueue.pop_front();
-		retval = true;
+		retval = !job->skip;
 	}
 	jobQueueMutex.unlock();
 
@@ -430,11 +409,9 @@ u32 ScriptApiAsync::queueAsync(std::string &&serialized_func,
 			param, mod_origin);
 }
 
-u32 ScriptApiAsync::replaceAsync(const u32 &id, std::string &&serialized_func,
-		PackedValue *param, const std::string &mod_origin)
+bool ScriptApiAsync::cancelAsync(const u32 &id)
 {
-	return asyncEngine.replaceAsyncJob(id, std::move(serialized_func),
-			param, mod_origin);
+	return asyncEngine.cancelAsyncJob(id);
 }
 
 void ScriptApiAsync::stepAsync()

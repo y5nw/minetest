@@ -233,9 +233,6 @@ local function test_async_job_replacement(cb)
 			return cb("Wrong async value passed")
 		end
 	end, 2)
-	if job:get_id() ~= newjob:get_id() then
-		return cb("AsyncJob:replace sanity check failed")
-	end
 
 	job = core.handle_async(function(x)
 		return x

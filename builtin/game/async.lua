@@ -25,16 +25,18 @@ function core.handle_async(func, callback, ...)
 end
 
 if core.async_job_methods then
-	local replace_job = core.async_job_methods.replace
 	function core.async_job_methods:replace(func, callback, ...)
-		local newjob = replace_job(self, prepare_async_args(func, callback, ...))
-		core.async_jobs[newjob:get_id()] = callback
-		return newjob
+		self:cancel()
+		return core.handle_async(func, callback, ...)
 	end
 
-	local dummy = function() end
 	function core.async_job_methods:cancel()
-		return self:get_id() == self:replace(dummy, dummy):get_id()
+		local id = self:get_id()
+		local cancelled = core.cancel_async_callback(id)
+		if cancelled then
+			core.async_jobs[id] = nil
+		end
+		return cancelled
 	end
 
 	core.async_job_methods = nil
