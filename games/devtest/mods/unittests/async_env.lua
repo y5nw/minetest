@@ -223,22 +223,6 @@ local function test_async_job_replacement(cb)
 	fill_async()
 	local job = core.handle_async(function(x)
 		return x
-	end, function(ret)
-		return cb("Replaced async callback still run")
-	end, 1)
-	local cancelled, newjob = job:replace(function(x)
-		return -x
-	end, function(ret)
-		if ret ~= -2 then
-			return cb("Wrong async value passed")
-		end
-	end, 2)
-	if not cancelled then
-		return cb("AsyncJob:replace sanity check failed")
-	end
-
-	job = core.handle_async(function(x)
-		return x
 	end, function()
 		return cb("Canceled async job run")
 	end)
@@ -246,28 +230,14 @@ local function test_async_job_replacement(cb)
 		return cb("AsyncJob:cancel sanity check failed")
 	end
 
-	-- Try to replace a job that is already run. Do this by delaying the main thread by some time.
+	-- Try to cancel a job that is already run.
 	job = core.handle_async(function(x)
 		return x
 	end, function(ret)
-		if ret ~= 1 then
-			return cb("Wrong async value passed to old handler")
-		end
-
-		cancelled, newjob = job:replace(function(x)
-			return -x
-		end, function(new_ret)
-			if new_ret ~= -2 then
-				return cb("Wrong async value passed to new handler")
-			end
-			cb()
-		end, 2)
-		if cancelled then
-			return cb("AsyncJob:replace replaced a completed job")
-		end
 		if job:cancel() then
-			return cb("AsyncJob:replace canceled a completed job")
+			return cb("AsyncJob:cancel canceled a completed job")
 		end
+		cb()
 	end, 1)
 end
 unittests.register("test_async_job_replacement", test_async_job_replacement, {async=true})

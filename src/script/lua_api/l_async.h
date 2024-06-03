@@ -18,7 +18,6 @@ private:
 	// get_id(self) -> id
 	static int l_get_id(lua_State *L);
 
-	// replace(self, func, params, mod_origin) -> id: implemented in Lua
 	// cancel(self) -> boolean: implemented in Lua
 
 public:
