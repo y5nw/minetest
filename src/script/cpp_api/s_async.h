@@ -146,7 +146,7 @@ public:
 	 * Get the maximum number of threads that can be used by the async environment
 	 */
 	unsigned int getThreadingCapacity() const {
-		return autoscaleMaxWorkers;
+		return MYMAX(workerThreads.size(), autoscaleMaxWorkers);
 	}
 
 protected:
