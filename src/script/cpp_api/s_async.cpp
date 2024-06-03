@@ -141,11 +141,13 @@ u32 AsyncEngine::queueAsyncJob(std::string &&func, PackedValue *params,
 bool AsyncEngine::cancelAsyncJob(const u32 &id)
 {
 	MutexAutoLock autolock(jobQueueMutex);
-	int pos = id - (jobIdCounter - jobQueue.size());
-	if (pos < 0 || pos >= jobQueue.size())
-		return false;
-	jobQueue[pos].skip = true;
-	return true;
+	for (auto job = jobQueue.begin(); job != jobQueue.end(); job++) {
+		if (job->id == id) {
+			jobQueue.erase(job);
+			return true;
+		}
+	}
+	return false;
 }
 
 /******************************************************************************/
@@ -159,7 +161,7 @@ bool AsyncEngine::getJob(LuaJobInfo *job)
 	if (!jobQueue.empty()) {
 		*job = std::move(jobQueue.front());
 		jobQueue.pop_front();
-		retval = !job->skip;
+		retval = true;
 	}
 	jobQueueMutex.unlock();
 

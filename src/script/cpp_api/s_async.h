@@ -58,8 +58,6 @@ struct LuaJobInfo
 	std::string mod_origin;
 	// JobID used to identify a job and match it to callback
 	u32 id;
-	// Whether to skip this job
-	bool skip = false;
 };
 
 // Asynchronous working environment
