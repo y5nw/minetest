@@ -1,6 +1,6 @@
 /*
 Minetest
-Copyright (C) 2024 y5nw <y5nw@outlook.com>
+Copyright (C) 2024 y5nw <y5nw@protonmail.com>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
