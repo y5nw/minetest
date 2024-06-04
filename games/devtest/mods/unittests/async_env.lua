@@ -212,8 +212,8 @@ local function fill_async()
 	local capacity = core.get_async_threading_capacity()
 	for _ = 1, capacity do
 		core.handle_async(function()
-			local t = os.clock()
-			while os.clock() < t + 0.1 do
+			local t = core.get_us_time()
+			while core.get_us_time() < t + 10000 do
 			end
 		end, function() end)
 	end

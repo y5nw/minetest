@@ -57,7 +57,7 @@ public:
 	void saveGlobals();
 
 	// Initialize async engine, call this AFTER loading all mods
-	void initAsync();
+	void initAsync() override;
 
 private:
 	void InitializeModApi(lua_State *L, int top);
