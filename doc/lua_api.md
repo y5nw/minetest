@@ -7469,7 +7469,6 @@ use the provided load and write functions for this.
 An `AsyncJob` is a reference to a job to be run in an async environment.
 
 ### Methods
-* `get_id()`: get the numeric ID of the job.
 * `cancel()`: try to cancel the job
     * Returns whether the job was cancelled.
 
