@@ -230,7 +230,7 @@ public:
 
 	u32 queueAsync(std::string &&serialized_func,
 			PackedValue *param, const std::string &mod_origin);
-	bool cancelAsync(const u32 &id);
+	bool cancelAsync(u32 id);
 	unsigned int getThreadingCapacity() const {
 		return asyncEngine.getThreadingCapacity();
 	}

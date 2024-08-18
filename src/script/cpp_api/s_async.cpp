@@ -138,7 +138,7 @@ u32 AsyncEngine::queueAsyncJob(std::string &&func, PackedValue *params,
 	return queueAsyncJob(std::move(to_add));
 }
 
-bool AsyncEngine::cancelAsyncJob(const u32 &id)
+bool AsyncEngine::cancelAsyncJob(u32 id)
 {
 	MutexAutoLock autolock(jobQueueMutex);
 	for (auto job = jobQueue.begin(); job != jobQueue.end(); job++) {
@@ -411,7 +411,7 @@ u32 ScriptApiAsync::queueAsync(std::string &&serialized_func,
 			param, mod_origin);
 }
 
-bool ScriptApiAsync::cancelAsync(const u32 &id)
+bool ScriptApiAsync::cancelAsync(u32 id)
 {
 	return asyncEngine.cancelAsyncJob(id);
 }
