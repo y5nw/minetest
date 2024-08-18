@@ -121,7 +121,7 @@ public:
 	 * @param id The ID of the job
 	 * @return Whether the job was cancelled
 	 */
-	bool cancelAsyncJob(const u32 &id);
+	bool cancelAsyncJob(u32 id);
 
 	/**
 	 * Engine step to process finished jobs
