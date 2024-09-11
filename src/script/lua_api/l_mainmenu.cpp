@@ -29,6 +29,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "version.h"
 #include "porting.h"
 #include "filesys.h"
+#include "gettext.h"
 #include "convert_json.h"
 #include "content/content.h"
 #include "content/subgames.h"
@@ -535,10 +536,7 @@ int ModApiMainMenu::l_show_keys_menu(lua_State *L)
 
 	GUIKeyChangeMenu *kmenu = new GUIKeyChangeMenu(
 			engine->m_rendering_engine->get_gui_env(),
-			engine->m_parent,
-			-1,
-			engine->m_menumanager,
-			engine->m_texture_source.get());
+			engine->m_joystick, engine->m_texture_source.get(), engine->m_sound_manager.get());
 	kmenu->drop();
 	return 0;
 }
