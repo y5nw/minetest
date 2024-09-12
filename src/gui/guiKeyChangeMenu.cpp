@@ -78,7 +78,7 @@ static const std::vector<setting_entry> control_settings {
 void GUIKeyChangeMenu::KeyChangeFormspecHandler::gotText(const StringMap &fields)
 {
 	if (fields.find("btn_save") != fields.end()) {
-		form->acceptInput();
+		form->saveSettings();
 		return;
 	}
 	if (fields.find("btn_cancel") != fields.end())
@@ -187,7 +187,7 @@ void GUIKeyChangeMenu::updateFormSource(const std::string &message)
 	setFormSource(form_src);
 }
 
-void GUIKeyChangeMenu::acceptInput()
+void GUIKeyChangeMenu::saveSettings()
 {
 	for (const auto &setting: keymap)
 		g_settings->set(setting.first, setting.second.sym());
