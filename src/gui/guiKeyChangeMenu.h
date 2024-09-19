@@ -34,7 +34,7 @@ struct key_setting
 {
 	int id;
 	std::wstring button_name;
-	KeyPress key;
+	KeySetting key;
 	std::string setting_name;
 	gui::IGUIButton *button;
 };

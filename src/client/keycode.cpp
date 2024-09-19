@@ -358,16 +358,16 @@ const KeyPress RMBKey("KEY_RBUTTON");
 */
 
 // A simple cache for quicker lookup
-static std::unordered_map<std::string, KeyPress> g_key_setting_cache;
+static std::unordered_map<std::string, KeySetting> g_key_setting_cache;
 
-const KeyPress &getKeySetting(const char *settingname)
+const KeySetting &getKeySetting(const char *settingname)
 {
 	auto n = g_key_setting_cache.find(settingname);
 	if (n != g_key_setting_cache.end())
 		return n->second;
 
 	auto &ref = g_key_setting_cache[settingname];
-	ref = g_settings->get(settingname).c_str();
+	ref = KeySetting(g_settings->get(settingname));
 	return ref;
 }
 

@@ -21,9 +21,10 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "exceptions.h"
 #include "irrlichttypes.h"
+#include "util/string.h"
 #include <Keycodes.h>
 #include <IEventReceiver.h>
-#include <string>
+#include <vector>
 
 class UnknownKeycode : public BaseException
 {
@@ -63,6 +64,38 @@ protected:
 	std::string m_name = "";
 };
 
+class KeySetting : public std::vector<KeyPress>
+{
+	using super = std::vector<KeyPress>;
+public:
+	KeySetting() = default;
+
+	KeySetting(const KeyPress &kp): super{kp} {};
+
+	KeySetting(const std::string &names): super()
+	{
+		for (const auto &name: str_split(names, ' '))
+			if (KeyPress kp(name.c_str()); strlen(kp.sym()) != 0)
+				push_back(std::move(kp));
+	}
+
+	std::string sym() const
+	{
+		std::vector<std::string> names;
+		for (const auto &kp: *this)
+			names.push_back(kp.sym());
+		return str_join(names, " ");
+	}
+
+	bool has(KeyPress &o) const
+	{
+		for (const auto &key: *this)
+			if (key == o)
+				return true;
+		return false;
+	}
+};
+
 // Global defines for convenience
 
 extern const KeyPress EscapeKey;
@@ -72,7 +105,7 @@ extern const KeyPress MMBKey; // Middle Mouse Button
 extern const KeyPress RMBKey;
 
 // Key configuration getter
-const KeyPress &getKeySetting(const char *settingname);
+const KeySetting &getKeySetting(const char *settingname);
 
 // Clear fast lookup cache
 void clearKeyCache();

@@ -143,7 +143,7 @@ void GUIKeyChangeMenu::regenerateGui(v2u32 screensize)
 			core::rect<s32> rect(0, 0, 100 * s, 30 * s);
 			rect += topleft + v2s32(offset.X + 150 * s, offset.Y - 5 * s);
 			k->button = GUIButton::addButton(Environment, rect, m_tsrc, this, k->id,
-					wstrgettext(k->key.name()).c_str());
+					utf8_to_wide(k->key.sym()).c_str());
 		}
 		if ((i + 1) % KMaxButtonPerColumns == 0) {
 			offset.X += 260 * s;
@@ -257,7 +257,7 @@ bool GUIKeyChangeMenu::acceptInput()
 bool GUIKeyChangeMenu::resetMenu()
 {
 	if (active_key) {
-		active_key->button->setText(wstrgettext(active_key->key.name()).c_str());
+		active_key->button->setText(wstrgettext(active_key->key.sym()).c_str());
 		active_key = nullptr;
 		return false;
 	}
@@ -274,7 +274,7 @@ bool GUIKeyChangeMenu::OnEvent(const SEvent& event)
 		if (event.KeyInput.Key == irr::KEY_DELETE)
 			kp = KeyPress(""); // To erase key settings
 		else if (event.KeyInput.Key == irr::KEY_ESCAPE)
-			kp = active_key->key; // Cancel
+			kp = active_key->key[0]; // Cancel
 
 		bool shift_went_down = false;
 		if(!shift_down &&
@@ -287,7 +287,7 @@ bool GUIKeyChangeMenu::OnEvent(const SEvent& event)
 		bool key_in_use = false;
 		if (strcmp(kp.sym(), "") != 0) {
 			for (key_setting *ks : key_settings) {
-				if (ks != active_key && ks->key == kp) {
+				if (ks != active_key && ks->key.has(kp)) {
 					key_in_use = true;
 					break;
 				}

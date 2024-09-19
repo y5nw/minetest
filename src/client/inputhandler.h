@@ -31,32 +31,6 @@ class InputHandler;
  Fast key cache for main game loop
  ****************************************************************************/
 
-/* This is faster than using getKeySetting with the tradeoff that functions
- * using it must make sure that it's initialised before using it and there is
- * no error handling (for example bounds checking). This is really intended for
- * use only in the main running loop of the client (the_game()) where the faster
- * (up to 10x faster) key lookup is an asset. Other parts of the codebase
- * (e.g. formspecs) should continue using getKeySetting().
- */
-struct KeyCache
-{
-
-	KeyCache()
-	{
-		handler = NULL;
-		populate();
-		populate_nonchanging();
-	}
-
-	void populate();
-
-	// Keys that are not settings dependent
-	void populate_nonchanging();
-
-	KeyPress key[KeyType::INTERNAL_ENUM_COUNT];
-	InputHandler *handler;
-};
-
 class KeyList : private std::list<KeyPress>
 {
 	typedef std::list<KeyPress> super;
@@ -94,6 +68,16 @@ class KeyList : private std::list<KeyPress>
 	}
 
 public:
+	using super::begin;
+	using super::end;
+
+	KeyList() = default;
+
+	KeyList(const KeySetting &ks): super()
+	{
+		append(ks);
+	}
+
 	void clear() { super::clear(); }
 
 	void set(const KeyPress &key)
@@ -127,7 +111,47 @@ public:
 		}
 	}
 
+	void append(const KeySetting &ks)
+	{
+		for (const auto &key: ks)
+			set(key);
+	}
+
 	bool operator[](const KeyPress &key) const { return find(key) != end(); }
+
+	bool hasOneOf(const KeySetting &keys) const
+	{
+		for (const auto &key: keys)
+			if (operator[](key))
+				return true;
+		return false;
+	}
+};
+
+/* This is faster than using getKeySetting with the tradeoff that functions
+ * using it must make sure that it's initialised before using it and there is
+ * no error handling (for example bounds checking). This is really intended for
+ * use only in the main running loop of the client (the_game()) where the faster
+ * (up to 10x faster) key lookup is an asset. Other parts of the codebase
+ * (e.g. formspecs) should continue using getKeySetting().
+ */
+struct KeyCache
+{
+
+	KeyCache()
+	{
+		handler = NULL;
+		populate();
+		populate_nonchanging();
+	}
+
+	void populate();
+
+	// Keys that are not settings dependent
+	void populate_nonchanging();
+
+	KeyList key[KeyType::INTERNAL_ENUM_COUNT];
+	InputHandler *handler;
 };
 
 class MyEventReceiver : public IEventReceiver
@@ -144,6 +168,15 @@ public:
 		bool b = keyWasDown[keyCode];
 		if (b)
 			keyWasDown.unset(keyCode);
+		return b;
+	}
+
+	bool WasKeyDown(const KeyList &keycodes)
+	{
+		bool b = false;
+		for (const auto &key: keycodes)
+			if (WasKeyDown(key))
+				b = true;
 		return b;
 	}
 
