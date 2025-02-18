@@ -176,10 +176,9 @@ local function test_portable_metatable_override()
 end
 unittests.register("test_portable_metatable_override", test_portable_metatable_override)
 
+local custom_metatable = {}
+core.register_portable_metatable("unittests:custom_metatable", custom_metatable)
 local function test_portable_metatable_registration(cb)
-	local custom_metatable = {}
-	core.register_portable_metatable("unittests:custom_metatable", custom_metatable)
-
 	core.handle_async(function(x)
 		-- unittests.custom_metatable is registered in inside_async_env.lua
 		return getmetatable(x) == unittests.custom_metatable, x
