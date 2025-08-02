@@ -129,7 +129,7 @@ void set_default_settings()
 	settings->setDefault("chat_weblink_color", "#8888FF");
 
 	// Keymap
-#if USE_SDL2
+#if USE_SDL3
 #define USEKEY2(name, value, _) settings->setDefault(name, value)
 #else
 #define USEKEY2(name, _, value) settings->setDefault(name, value)
@@ -140,7 +140,7 @@ void set_default_settings()
 	USEKEY2("keymap_left", "SYSTEM_SCANCODE_4", "KEY_KEY_A");
 	USEKEY2("keymap_right", "SYSTEM_SCANCODE_7", "KEY_KEY_D");
 	USEKEY2("keymap_jump", "SYSTEM_SCANCODE_44", "KEY_SPACE");
-#if !USE_SDL2 && defined(__MACH__) && defined(__APPLE__)
+#if !USE_SDL3 && defined(__MACH__) && defined(__APPLE__)
 	// Altered settings for CIrrDeviceOSX
 	settings->setDefault("keymap_sneak", "KEY_SHIFT");
 #else

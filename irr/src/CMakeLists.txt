@@ -1,8 +1,8 @@
-set(DEFAULT_SDL2 ON)
+set(DEFAULT_SDL3 ON)
 
-option(USE_SDL2 "Use the SDL2 backend" ${DEFAULT_SDL2})
+option(USE_SDL3 "Use the SDL3 backend" ${DEFAULT_SDL3})
 
-option(USE_SDL2_STATIC "Link with SDL2 static libraries" FALSE)
+option(USE_SDL3_STATIC "Link with SDL3 static libraries" FALSE)
 
 # Compiler flags
 
@@ -68,8 +68,8 @@ elseif(APPLE)
 	set(DEVICE "OSX")
 elseif(ANDROID)
 	add_compile_definitions(_IRR_ANDROID_PLATFORM_)
-	if(NOT USE_SDL2)
-		message(FATAL_ERROR "The Android build requires SDL2")
+	if(NOT USE_SDL3)
+		message(FATAL_ERROR "The Android build requires SDL3")
 	endif()
 elseif(EMSCRIPTEN)
 	add_compile_definitions(_IRR_EMSCRIPTEN_PLATFORM_ _IRR_COMPILE_WITH_EGL_MANAGER_)
@@ -92,7 +92,7 @@ if(MSVC)
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 
-if(USE_SDL2)
+if(USE_SDL3)
 	set(DEVICE "SDL")
 elseif(DEVICE STREQUAL "SDL")
 	message(FATAL_ERROR "SDL was used but not enabled?!")
@@ -124,7 +124,7 @@ endif()
 
 # OpenGL
 
-if(USE_SDL2)
+if(USE_SDL3)
 	if(NOT ANDROID)
 		set(DEFAULT_OPENGL3 TRUE)
 	endif()
@@ -157,7 +157,7 @@ else()
 	endif()
 endif()
 
-if(ENABLE_OPENGL OR (ENABLE_OPENGL3 AND NOT USE_SDL2))
+if(ENABLE_OPENGL OR (ENABLE_OPENGL3 AND NOT USE_SDL3))
 	if(ENABLE_OPENGL)
 		add_compile_definitions(_IRR_COMPILE_WITH_OPENGL_)
 		set(OPENGL_DIRECT_LINK TRUE) # driver relies on this
@@ -176,8 +176,8 @@ if(ENABLE_OPENGL3)
 		# supported
 	elseif(DEVICE STREQUAL "X11")
 		# supported
-	elseif (NOT USE_SDL2)
-		message(FATAL_ERROR "OpenGL 3 driver requires SDL2")
+	elseif (NOT USE_SDL3)
+		message(FATAL_ERROR "OpenGL 3 driver requires SDL3")
 	endif()
 endif()
 
@@ -226,35 +226,35 @@ endif()
 if(ENABLE_OPENGL)
 	find_package(OpenGL REQUIRED)
 endif()
-set(USE_SDL2_SHARED FALSE)
-if(USE_SDL2)
-	if(NOT USE_SDL2_STATIC)
-		set(USE_SDL2_SHARED TRUE)
+set(USE_SDL3_SHARED FALSE)
+if(USE_SDL3)
+	if(NOT USE_SDL3_STATIC)
+		set(USE_SDL3_SHARED TRUE)
 	endif()
 	if(NOT ANDROID)
-		find_package(SDL2 REQUIRED)
+		find_package(SDL3 REQUIRED)
 	else()
 		# provided by AndroidLibs.cmake
 	endif()
-	message(STATUS "Found SDL2: ${SDL2_LIBRARIES}")
+	message(STATUS "Found SDL3: ${SDL3_LIBRARIES}")
 
 	# unfortunately older SDL does not provide its version to cmake, so check header.
-	set(CMAKE_REQUIRED_INCLUDES ${SDL2_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_INCLUDES ${SDL3_INCLUDE_DIRS})
 	unset(CHECK_SDL_VERSION CACHE)
-	check_cxx_source_compiles("#include <SDL_version.h>\n\
-#if !SDL_VERSION_ATLEAST(2, 0, 10)\n\
+	check_cxx_source_compiles("#include <SDL3/SDL_version.h>\n\
+#if !SDL_VERSION_ATLEAST(3, 2, 0)\n\
 #error\n\
 #endif\n\
 int main() {}" CHECK_SDL_VERSION)
 	if(NOT CHECK_SDL_VERSION)
-		message(FATAL_ERROR "SDL2 is too old, required is at least 2.0.10!")
+		message(FATAL_ERROR "SDL3 is too old, required is at least 3.2.0!")
 	endif()
 
 	# ...no target either.
-	if(NOT TARGET SDL2::SDL2)
-		add_library(SDL2::SDL2 SHARED IMPORTED)
-		set_target_properties(SDL2::SDL2 PROPERTIES
-			IMPORTED_LOCATION "${SDL2_LIBRARIES}")
+	if(NOT TARGET SDL3::SDL3)
+		add_library(SDL3::SDL3 SHARED IMPORTED)
+		set_target_properties(SDL3::SDL3 PROPERTIES
+			IMPORTED_LOCATION "${SDL3_LIBRARIES}")
 	endif()
 endif()
 
@@ -264,7 +264,7 @@ if(ENABLE_OPENGL AND DEVICE STREQUAL "SDL")
 	# The legacy GL driver requires some symbols from GL 4.5 to compile,
 	# which SDL only provides since 2.26.0 (Nov 2022).
 	# We have a fallback in case this isn't satisfied so test for it.
-	set(CMAKE_REQUIRED_INCLUDES ${SDL2_INCLUDE_DIRS})
+	set(CMAKE_REQUIRED_INCLUDES ${SDL3_INCLUDE_DIRS})
 	unset(CHECK_GL_VERSION_4_5 CACHE)
 	check_cxx_source_compiles("#include <SDL_opengl.h>\n\
 #ifndef GL_VERSION_4_5\n\
@@ -285,7 +285,7 @@ elseif(APPLE)
 	find_library(IOKIT_LIB IOKit REQUIRED)
 
 	add_compile_definitions(GL_SILENCE_DEPRECATION)
-elseif(NOT USE_SDL2)
+elseif(NOT USE_SDL3)
 	# Unix probably
 	find_package(X11 REQUIRED)
 	if(USE_XINPUT2 AND NOT X11_Xi_FOUND)
@@ -300,7 +300,7 @@ set(link_includes
 	"${ZLIB_INCLUDE_DIR}"
 	"${JPEG_INCLUDE_DIR}"
 	"${PNG_INCLUDE_DIR}"
-	"$<$<BOOL:${USE_SDL2}>:${SDL2_INCLUDE_DIRS}>"
+	"$<$<BOOL:${USE_SDL3}>:${SDL3_INCLUDE_DIRS}>"
 
 	${OPENGL_INCLUDE_DIR}
 	${OPENGLES2_INCLUDE_DIR}
@@ -584,13 +584,13 @@ target_link_libraries(IrrlichtMt PRIVATE
 	${ZLIB_LIBRARY}
 	${JPEG_LIBRARY}
 	${PNG_LIBRARY}
-	"$<$<BOOL:${USE_SDL2_SHARED}>:SDL2::SDL2>"
-	"$<$<BOOL:${USE_SDL2_STATIC}>:SDL2::SDL2-static>"
+	"$<$<BOOL:${USE_SDL3_SHARED}>:SDL3::SDL3>"
+	"$<$<BOOL:${USE_SDL3_STATIC}>:SDL3::SDL3-static>"
 
 	"$<$<BOOL:${OPENGL_DIRECT_LINK}>:${OPENGL_LIBRARIES}>"
 	${EGL_LIBRARY}
 
-	# incl. transitive SDL2 dependencies for static linking
+	# incl. transitive SDL3 dependencies for static linking
 	"$<$<PLATFORM_ID:Android>:-landroid -llog -lGLESv2 -lGLESv1_CM -lOpenSLES>"
 	${COCOA_LIB}
 	${IOKIT_LIB}

@@ -15,13 +15,13 @@ The following libraries are required to be installed:
 * OpenGL
   * or on mobile: OpenGL ES (can be optionally enabled on desktop too)
 * on Unix: X11
-* SDL2 (see below)
+* SDL3 (see below)
 
 Aside from standard search options (`ZLIB_INCLUDE_DIR`, `ZLIB_LIBRARY`, ...) the following options are available:
 * `ENABLE_OPENGL` - Enable OpenGL driver
 * `ENABLE_OPENGL3` (default: `OFF`) - Enable OpenGL 3+ driver
 * `ENABLE_GLES2` - Enable OpenGL ES 2+ driver
-* `USE_SDL2` (default: platform-dependent, usually `ON`) - Use SDL2 instead of older native device code
+* `USE_SDL3` (default: platform-dependent, usually `ON`) - Use SDL3 instead of older native device code
 
 However, IrrlichtMt cannot be built or installed separately.
 

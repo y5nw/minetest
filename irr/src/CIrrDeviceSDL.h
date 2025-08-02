@@ -17,8 +17,8 @@
 #endif
 
 #include <SDL.h>
-// DirectFB is removed in SDL3, thou distribution as Alpine currently ships SDL2
-// with enabled DirectFB, but requiring another fix at a top of SDL2.
+// DirectFB is removed in SDL3, thou distribution as Alpine currently ships SDL3
+// with enabled DirectFB, but requiring another fix at a top of SDL3.
 // We don't need DirectFB in Irrlicht/Minetest, so simply disable it here to prevent issues.
 #undef SDL_VIDEO_DRIVER_DIRECTFB
 #include <SDL_syswm.h>

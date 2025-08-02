@@ -13,7 +13,7 @@ install_linux_deps() {
 		libleveldb-dev libcurl4-openssl-dev libzstd-dev libssl-dev
 	)
 	[ -n "$graphics" ] && pkgs+=(
-		libpng-dev libjpeg-dev libgl1-mesa-dev libsdl2-dev libfreetype-dev
+		libpng-dev libjpeg-dev libgl1-mesa-dev libsdl3-dev libfreetype-dev
 		libogg-dev libvorbis-dev libopenal-dev
 	)
 
@@ -36,7 +36,7 @@ install_linux_deps() {
 install_macos_deps() {
 	local pkgs=(
 		cmake gettext freetype gmp jpeg-turbo jsoncpp leveldb
-		libogg libpng libvorbis luajit zstd sdl2
+		libogg libpng libvorbis luajit zstd sdl3
 	)
 	export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
 	export HOMEBREW_NO_INSTALL_CLEANUP=1

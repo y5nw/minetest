@@ -305,7 +305,7 @@ KeyPress::KeyPress(const std::string &name)
 
 KeyPress::KeyPress(const SEvent::SKeyInput &in)
 {
-	if (USE_SDL2) {
+	if (USE_SDL3) {
 		if (in.SystemKeyCode)
 			scancode.emplace<u32>(in.SystemKeyCode);
 		else
@@ -317,7 +317,7 @@ KeyPress::KeyPress(const SEvent::SKeyInput &in)
 
 std::string KeyPress::formatScancode() const
 {
-	if (USE_SDL2) {
+	if (USE_SDL3) {
 		if (auto pv = std::get_if<u32>(&scancode))
 			return *pv == 0 ? "" : "SYSTEM_SCANCODE_" + std::to_string(*pv);
 	}
@@ -327,7 +327,7 @@ std::string KeyPress::formatScancode() const
 std::string KeyPress::sym() const
 {
 	std::string name = lookup_scancode(scancode).Name;
-	if (USE_SDL2 || name.empty())
+	if (USE_SDL3 || name.empty())
 		if (auto newname = formatScancode(); !newname.empty())
 			return newname;
 	return name;
@@ -353,7 +353,7 @@ wchar_t KeyPress::getKeychar() const
 
 bool KeyPress::loadFromScancode(const std::string &name)
 {
-	if (USE_SDL2) {
+	if (USE_SDL3) {
 		if (!str_starts_with(name, "SYSTEM_SCANCODE_"))
 			return false;
 		char *p;

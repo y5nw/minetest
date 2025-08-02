@@ -13,7 +13,7 @@ pkgs.mkShell {
     pkgs.libjpeg
     pkgs.libpng
     pkgs.libGL
-    pkgs.SDL2
+    pkgs.SDL3
     pkgs.openal
     pkgs.curl
     pkgs.libvorbis

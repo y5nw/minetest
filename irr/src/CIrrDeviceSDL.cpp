@@ -214,7 +214,7 @@ int CIrrDeviceSDL::findCharToPassToIrrlicht(uint32_t sdlKey, EKEY_CODE irrlichtK
 	}
 
 	// SDL in-place ORs values with no character representation with 1<<30
-	// https://wiki.libsdl.org/SDL2/SDLKeycodeLookup
+	// https://wiki.libsdl.org/SDL3/SDLKeycodeLookup
 	// This also affects the numpad keys btw.
 	if (sdlKey & (1 << 30))
 		return 0;
@@ -375,10 +375,6 @@ CIrrDeviceSDL::CIrrDeviceSDL(const SIrrlichtCreationParameters &param) :
 		sdlver += v.minor;
 		sdlver += ".";
 		sdlver += v.patch;
-		// the SDL team seems to intentionally number sdl2-compat this way:
-		// <https://github.com/libsdl-org/sdl2-compat/tags>
-		if (v.patch >= 50)
-			sdlver += " (compat)";
 
 		sdlver += " on ";
 		sdlver += SDL_GetPlatform();

@@ -15,7 +15,7 @@ zlib_version=1.3.1
 zstd_version=1.5.7
 libjpeg_version=3.0.1
 libpng_version=1.6.47
-sdl2_version=2.32.2
+sdl3_version=2.32.2
 
 download () {
 	local url=$1
@@ -88,8 +88,8 @@ add_cmake_libs () {
 		-DJPEG_INCLUDE_DIR=$libdir/libjpeg/include
 		-DJPEG_DLL="$(_dlls $libdir/libjpeg/bin/libjpeg*)"
 
-		-DSDL2_DIR=$libdir/sdl2/lib/cmake/SDL2
-		-DSDL2_DLL="$(_dlls $libdir/sdl2/bin/*)"
+		-DSDL3_DIR=$libdir/sdl3/lib/cmake/SDL3
+		-DSDL3_DLL="$(_dlls $libdir/sdl3/bin/*)"
 
 		-DZLIB_INCLUDE_DIR=$libdir/zlib/include
 		-DZLIB_LIBRARY=$libdir/zlib/lib/libz.dll.a
