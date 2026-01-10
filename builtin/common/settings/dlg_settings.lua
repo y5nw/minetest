@@ -168,8 +168,16 @@ local function load()
 	-- These must not be translated, as they need to show in the local
 	-- language no matter the user's current language.
 	-- This list must be kept in sync with src/unsupported_language_list.txt.
-	get_setting_info("language").option_labels = {
+	local language_labels = {
 		[""] = fgettext_ne("(Use system language)"),
+	}
+	for _, locale in pairs(get_setting_info("language").values) do
+		if locale ~= "" then
+			language_labels[locale] = ("%s [%s]"):format(core.get_locale_description(locale), locale)
+		end
+	end
+	get_setting_info("language").option_labels = language_labels
+	--[[
 		--ar = " [ar]", blacklisted
 		be = "Беларуская [be]",
 		bg = "Български [bg]",
@@ -230,6 +238,7 @@ local function load()
 		zh_CN = "中文 (简体) [zh_CN]",
 		zh_TW = "正體中文 (繁體) [zh_TW]",
 	}
+	--]]
 
 	get_setting_info("touch_controls").option_labels = {
 		["auto"] = fgettext_ne("Auto"),

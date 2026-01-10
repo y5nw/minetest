@@ -288,6 +288,7 @@ find_package(Lua REQUIRED)
 if(NOT USE_LUAJIT)
 	add_subdirectory(lib/bitop)
 endif()
+find_package(ICU REQUIRED uc data i18n)
 add_subdirectory(lib/lstrpack)
 add_subdirectory(lib/sha256)
 

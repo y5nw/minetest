@@ -577,6 +577,7 @@ include_directories(SYSTEM
 	${GMP_INCLUDE_DIR}
 	${JSON_INCLUDE_DIR}
 	${LUA_BIT_INCLUDE_DIR}
+	${ICU_INCLUDE_DIRS}
 	# on Android, Luanti depends on SDL2 directly
 	# on other platforms, only IrrlichtMt depends on SDL2
 	"$<$<PLATFORM_ID:Android>:${SDL2_INCLUDE_DIRS}>"
@@ -699,6 +700,7 @@ if(BUILD_CLIENT)
 		${GMP_LIBRARY}
 		${JSON_LIBRARY}
 		${LUA_BIT_LIBRARY}
+		${ICU_LIBRARIES}
 		lstrpack
 		sha256
 		${FREETYPE_LIBRARY}
@@ -790,6 +792,7 @@ if(BUILD_SERVER)
 		${JSON_LIBRARY}
 		${LUA_LIBRARY}
 		${LUA_BIT_LIBRARY}
+		${ICU_LIBRARIES}
 		lstrpack
 		sha256
 		${GMP_LIBRARY}
