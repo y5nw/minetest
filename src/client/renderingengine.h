@@ -8,10 +8,10 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "client/inputhandler.h"
 #include "debug.h"
 #include "config.h"
 #include "client/shader.h"
+#include "client/input/inputhandler.h"
 #include "client/render/core.h"
 // include the shadow mapper classes too
 #include "client/shadows/dynamicshadowsrender.h"

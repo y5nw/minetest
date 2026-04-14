@@ -6,11 +6,11 @@
 
 #include <cmath>
 #include <csignal>
+#include "client/input/inputhandler.h"
+#include "client/input/joystick_controller.h"
+#include "client/input/keys.h"
 #include "client/gameui.h"
-#include "client/inputhandler.h"
 #include "client/texturepaths.h"
-#include "client/keys.h"
-#include "client/joystick_controller.h"
 #include "client/mapblock_mesh.h"
 #include "client/sound.h"
 #include "clientmap.h"

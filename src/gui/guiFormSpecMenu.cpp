@@ -11,7 +11,8 @@
 #include "EGUIElementTypes.h"
 #include "itemdef.h"
 #include "gamedef.h"
-#include "client/keycode.h"
+#include "client/input/joystick_controller.h"
+#include "client/input/keycode.h"
 #include "gui/guiTable.h"
 #include <IGUIButton.h>
 #include <IGUICheckBox.h>
@@ -22,7 +23,6 @@
 #include <IGUIImage.h>
 #include <AnimatedMeshSceneNode.h>
 #include "client/renderingengine.h"
-#include "client/joystick_controller.h"
 #include "log.h"
 #include "drawItemStack.h"
 #include "gettext.h"

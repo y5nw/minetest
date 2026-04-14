@@ -6,7 +6,7 @@
 #include "gettext.h"
 #include "settings.h"
 #include "log.h"
-#include "renderingengine.h"
+#include "client/renderingengine.h"
 #include "util/basic_macros.h"
 #include "util/string.h"
 #include <unordered_map>

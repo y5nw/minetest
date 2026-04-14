@@ -5,7 +5,7 @@
 #include "guiChatConsole.h"
 #include "chat.h"
 #include "client/client.h"
-#include "client/keycode.h"
+#include "client/input/keycode.h"
 #include "settings.h"
 #include "porting.h"
 #include "client/texturesource.h"

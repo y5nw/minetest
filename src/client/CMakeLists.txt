@@ -28,6 +28,9 @@ file(GLOB_RECURSE client_HDRS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 set(client_SRCS
 	${client_HDRS}
 	${sound_SRCS}
+	${CMAKE_CURRENT_SOURCE_DIR}/input/inputhandler.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/input/joystick_controller.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/input/keycode.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/meshgen/collector.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/render/anaglyph.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/render/core.cpp
@@ -57,10 +60,7 @@ set(client_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/guiscalingfilter.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/hud.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/imagefilters.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/inputhandler.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/item_visuals_manager.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/joystick_controller.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/keycode.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/localplayer.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mapblock_mesh.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/mesh.cpp
