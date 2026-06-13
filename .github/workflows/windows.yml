@@ -102,12 +102,12 @@ jobs:
         config:
           - {
               arch: x86,
-              generator: "-G'Visual Studio 17 2022' -A Win32",
+              generator: "-G'Visual Studio 18 2026' -A Win32",
               vcpkg_triplet: x86-windows
             }
           - {
               arch: x64,
-              generator: "-G'Visual Studio 17 2022' -A x64",
+              generator: "-G'Visual Studio 18 2026' -A x64",
               vcpkg_triplet: x64-windows
             }
 
