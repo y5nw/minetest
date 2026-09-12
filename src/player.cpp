@@ -170,10 +170,6 @@ void PlayerControl::setMovementFromKeys()
 u32 PlayerControl::getKeysPressed() const
 {
 	u32 keypress_bits =
-		( (u32)((up    > 0) & 1) << 0) |
-		( (u32)((down  > 0) & 1) << 1) |
-		( (u32)((left  > 0) & 1) << 2) |
-		( (u32)((right > 0) & 1) << 3) |
 		( (u32)(jump  & 1) << 4) |
 		( (u32)(aux1  & 1) << 5) |
 		( (u32)(sneak & 1) << 6) |
@@ -181,6 +177,15 @@ u32 PlayerControl::getKeysPressed() const
 		( (u32)(place & 1) << 8) |
 		( (u32)(zoom  & 1) << 9)
 	;
+
+	if (isMoving()) {
+		float angular_threshold = 3.0f/8.0f * M_PI;
+		keypress_bits |=
+			((u32)(std::abs(movement_direction) < angular_threshold) << 0) | // Forward
+			((u32)(std::abs(M_PI - movement_direction) < angular_threshold) << 1) | // Backward
+			((u32)(std::abs(M_PI_2 + movement_direction) < angular_threshold) << 2) | // Left
+			((u32)(std::abs(M_PI_2 - movement_direction) < angular_threshold) << 3); // Right
+	}
 
 	return keypress_bits;
 }
