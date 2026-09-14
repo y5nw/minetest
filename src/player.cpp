@@ -167,6 +167,14 @@ void PlayerControl::setMovementFromKeys()
 	}
 }
 
+static u32 convert_direction_bit(float angle, float direction, int bit)
+{
+	constexpr float angular_threshold = 3.0f/8.0f * M_PI;
+	const auto diff = std::abs(angle - direction);
+	const auto mindiff = std::min<float>(diff, 2*M_PI - diff);
+	return ((u32)(mindiff <= angular_threshold) << bit);
+}
+
 u32 PlayerControl::getKeysPressed() const
 {
 	u32 keypress_bits =
@@ -179,12 +187,11 @@ u32 PlayerControl::getKeysPressed() const
 	;
 
 	if (isMoving()) {
-		float angular_threshold = 3.0f/8.0f * M_PI;
 		keypress_bits |=
-			((u32)(std::abs(movement_direction) < angular_threshold) << 0) | // Forward
-			((u32)(std::abs(M_PI - movement_direction) < angular_threshold) << 1) | // Backward
-			((u32)(std::abs(M_PI_2 + movement_direction) < angular_threshold) << 2) | // Left
-			((u32)(std::abs(M_PI_2 - movement_direction) < angular_threshold) << 3); // Right
+			convert_direction_bit(movement_direction, 0, 0) | // Forward
+			convert_direction_bit(movement_direction, M_PI, 1) | // Backward
+			convert_direction_bit(movement_direction, -M_PI_2, 2) | // Left
+			convert_direction_bit(movement_direction, M_PI_2, 3); // Right
 	}
 
 	return keypress_bits;
