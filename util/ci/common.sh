@@ -18,7 +18,7 @@ install_linux_deps() {
 	)
 	[ -n "$graphics" ] && pkgs+=(
 		libpng-dev libjpeg-dev libgl1-mesa-dev "$sdl" libfreetype-dev
-		libogg-dev libvorbis-dev libopenal-dev
+		libogg-dev libvorbis-dev libopenal-dev libzip-dev
 	)
 
 	sudo apt-get update
